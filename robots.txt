@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://markmckellar.github.io/sitemap.xml
