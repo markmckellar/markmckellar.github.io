@@ -91,6 +91,17 @@ pre .t { color: var(--alert); font-weight: 600; }
 ul.sys { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.45rem; }
 ul.sys li::marker { color: var(--alert); }
 .note { font-size: 0.9rem; color: var(--fur); border-left: 3px solid var(--door); padding-left: 0.8rem; }
+
+.more { margin-top: 2.6rem; border-top: 1px solid var(--line); padding-top: 1.4rem; display: grid; gap: 0.8rem; }
+.more-label { color: var(--alert); }
+.more-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 0.8rem; }
+.more-card { display: grid; gap: 0.3rem; align-content: start; background: var(--deck); border: 1px solid transparent; border-radius: 6px;
+  padding: 0.7rem 0.7rem 0.9rem; color: var(--flap); text-decoration: none; }
+.more-card:hover, .more-card:focus-visible { border-color: var(--door); }
+.more-card img { display: block; width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: 4px; background: var(--night); }
+.more-card b { font-family: var(--f-display); font-size: 1.15rem; line-height: 1.2; margin-top: 0.3rem; color: var(--alert); }
+.more-card span { font-size: 0.92rem; line-height: 1.45; color: var(--fur); }
+.more-foot { font-size: 0.95rem; color: var(--fur); }
 </style>
 </head>
 <body>
@@ -209,6 +220,23 @@ ul.sys li::marker { color: var(--alert); }
   <p>The story behind it, with the raccoons: <a href="../">Night Shift at the Pet Door</a>.</p>
 
   <p class="note">November 2026. Numbers are from the cmo READMEs, the test scores and the camera logs.</p>
+
+  <section class="more" aria-labelledby="more-h">
+    <span class="eyebrow more-label" id="more-h">More things I've built</span>
+    <div class="more-grid">
+      <a class="more-card" href="https://markmckellar.github.io/paths/#lab">
+        <img src="https://markmckellar.github.io/paths/og-image.png" alt="Lab samples flowing through a genetic testing lab, piling up at sequencing" loading="lazy">
+        <b>Paths: live process-flow map</b>
+        <span>Watch work move through a process: where it piles up, what gets sent back, how long each step takes. Demos: lab samples, a software delivery pipeline, a day in the life.</span>
+      </a>
+      <a class="more-card" href="https://markmckellar.github.io/connectiongraph/">
+        <img src="https://markmckellar.github.io/connectiongraph/og-image.png" alt="A three-generation pedigree chart drawn by the editor" loading="lazy">
+        <b>Pedigree chart editor</b>
+        <span>Build a family pedigree by clicking: standard notation, a layout that animates as you add relatives, genetic conditions and carriers, PDF export.</span>
+      </a>
+    </div>
+    <p class="more-foot">Everything else is on <a href="https://markmckellar.github.io/">markmckellar.github.io</a> and <a href="https://github.com/markmckellar">GitHub</a>.</p>
+  </section>
 </main>
 
 </body>
