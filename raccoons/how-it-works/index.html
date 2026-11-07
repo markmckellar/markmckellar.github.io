@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="How the pet door camera works: two cameras, a vision AI on a home GPU, how it is tested, and what it costs.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How the Pet Door Camera Works">
+<meta property="og:description" content="How the pet door camera works: two cameras, a vision AI on a home GPU, how it is tested, and what it costs.">
+<meta property="og:url" content="https://markmckellar.github.io/raccoons/how-it-works/">
+<meta property="og:image" content="https://markmckellar.github.io/images/raccoon.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://markmckellar.github.io/raccoons/how-it-works/">
+<style>body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>How the Pet Door Camera Works</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the companion to "Night Shift at the Pet Door". Same night-log palette and type; one reading column, with the pipeline, spec sheet and score tables as the set pieces. Dark first. */
+:root {
+  --night: #0d1417;
+  --deck: #152126;
+  --door: #1f5c45;
+  --flap: #e9efe9;
+  --fur: #9aa6a3;
+  --alert: #f2b13c;
+  --line: #24343a;
+  --code: #10191c;
+  --f-display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Literata", Georgia, "Times New Roman", serif;
+  --f-cam: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --code: #eaefe9; color-scheme: light; } }
+:root[data-theme="light"] {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --code: #eaefe9; color-scheme: light; }
+
+* { box-sizing: border-box; }
+body { background: var(--night); color: var(--flap); font-family: var(--f-body); font-size: 1.1rem; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+main { max-width: 40rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.05rem; }
+p { margin: 0; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; line-height: 1.05; margin: 0; }
+h1 { font-size: clamp(2.3rem, 8vw, 4rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.45rem, 4.6vw, 2rem); font-weight: 800; }
+.eyebrow, .meta { font-family: var(--f-cam); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fur); }
+.section { display: block; color: var(--alert); margin-top: 2.4rem; margin-bottom: -0.6rem; }
+a { color: var(--alert); }
+code { font-family: var(--f-cam); font-size: 0.86em; background: var(--code); padding: 0.05em 0.3em; border-radius: 3px; }
+strong { font-weight: 600; }
+
+header.hero { max-width: 40rem; margin: 0 auto; padding-block: 2.5rem 0.5rem; display: grid; gap: 1rem; }
+.hero .lede { font-size: 1.2rem; color: var(--fur); }
+
+/* The pipeline: what happens to one movie */
+.pipe { list-style: none; margin: 0.4rem 0; padding: 0; display: grid; gap: 0.5rem; counter-reset: step; }
+.pipe li { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.8rem; align-items: start; background: var(--deck);
+  border-radius: 6px; padding: 0.75rem 0.9rem; }
+.pipe li::before { counter-increment: step; content: counter(step); font: 800 1.5rem/1 var(--f-display); color: var(--alert); padding-top: 0.15rem; }
+.pipe b { font-family: var(--f-display); font-size: 1.1rem; display: block; }
+.pipe span { font-size: 0.95rem; line-height: 1.5; color: var(--fur); }
+.pipe li > div { min-width: 0; }
+
+/* Tables: spec sheet, scores, costs */
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 0.45rem 0.6rem; border-top: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-cam); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fur); font-weight: 400; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-cam); font-size: 0.9rem; white-space: nowrap; }
+tr.hi td { color: var(--alert); }
+.spec td:first-child { font-family: var(--f-cam); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fur); width: 38%; }
+caption { caption-side: bottom; text-align: left; font-family: var(--f-cam); font-size: 0.75rem; color: var(--fur); padding-top: 0.5rem; line-height: 1.5; }
+
+pre { margin: 0.3rem 0; background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 0.8rem 0.9rem;
+  overflow-x: auto; font: 0.82rem/1.5 var(--f-cam); }
+pre .k { color: var(--fur); }
+pre .t { color: var(--alert); font-weight: 600; }
+
+/* The 2x2 grid the model sees */
+.grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; max-width: 18rem; align-self: center; width: 100%;
+  background: var(--line); border: 3px solid var(--line); border-radius: 6px; overflow: hidden; }
+.grid4 div { aspect-ratio: 4 / 3; background: var(--deck); display: grid; place-items: center; font-family: var(--f-cam); font-size: 0.72rem; color: var(--fur); }
+.figcap { font-family: var(--f-cam); font-size: 0.75rem; color: var(--fur); text-align: center; }
+
+.pull { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.3rem, 4.2vw, 1.75rem); line-height: 1.15;
+  color: var(--alert); padding-block: 0.5rem; text-wrap: balance; }
+ul.sys { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.45rem; }
+ul.sys li::marker { color: var(--alert); }
+.note { font-size: 0.9rem; color: var(--fur); border-left: 3px solid var(--door); padding-left: 0.8rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">Companion to <a href="../">Night Shift at the Pet Door</a></span>
+  <h1>How the pet door camera works</h1>
+  <p class="lede">Two cameras, one question asked about 900 times a day, and a $1,000 computer in the house that answers it. What runs where, how the AI decides, how I test it, and what it costs.</p>
+</header>
+
+<main>
+  <span class="eyebrow section">What it does</span>
+  <h2>One question, all day</h2>
+  <p>Two cameras watch the house. When something moves, the system records a short movie, asks a vision AI what's in it, and tells us: a phone alert with a picture, a spoken message on the Google Home speakers, and an event on a web page where we can search everything the cameras have seen. The AI runs on my own computer, so no footage goes to an AI company.</p>
+  <p>The question is always the same: is there a person, legs, a cat, a dog, a raccoon, or some other animal?</p>
+  <ol class="pipe" aria-label="What happens to one movie">
+    <li><div><b>Watch</b><span>One watcher per camera copies the camera's video into short pieces and checks a few small frames a second for motion.</span></div></li>
+    <li><div><b>Cut</b><span>Motion opens an event; a few seconds of quiet closes it. The movie runs from just before the motion to just after.</span></div></li>
+    <li><div><b>Ask</b><span>Four frames go to the vision model on ada as one picture, with the question. It answers in JSON.</span></div></li>
+    <li><div><b>Tell</b><span>A phone alert, a spoken announcement, and an upload to the server and web app.</span></div></li>
+  </ol>
+
+  <span class="eyebrow section">The cameras</span>
+  <h2>A Pi at the flap, a store camera on the porch</h2>
+  <p>The pet door camera is a Raspberry Pi 4 pointed at the flap. It's been some version of that since 2020. The porch camera is a store-bought network camera that gives out a standard video stream (RTSP).</p>
+  <p>Each watcher uses ffmpeg to copy the camera's own video into short pieces, which takes almost no CPU, even on a Pi. At the same time it decodes a few small frames a second and checks them for motion.</p>
+
+  <span class="eyebrow section">The computer</span>
+  <h2>ada</h2>
+  <p>I bought a computer specifically to run the AI: ada, an HP Omen 16L desktop, in August 2025, for about $1,000.</p>
+  <div class="tbl">
+    <table class="spec">
+      <tr><td>Graphics card</td><td>NVIDIA GeForce RTX 5060 Ti, 16 GB</td></tr>
+      <tr><td>Processor</td><td>Intel Core Ultra 7 265F, 20 cores</td></tr>
+      <tr><td>Memory</td><td>16 GB</td></tr>
+      <tr><td>Storage</td><td>1 TB SSD</td></tr>
+      <tr><td>System</td><td>Ubuntu Linux</td></tr>
+    </table>
+  </div>
+  <p>The graphics card is the part that matters. Its 16 GB holds the vision model (about 5.5 GB loaded) with room to spare, and it answers in a second or two. Everything else on ada is an ordinary desktop. The 16 GB of system memory is the tight spot when the model, a browser and a few other programs all run at once.</p>
+
+  <span class="eyebrow section">Asking the AI</span>
+  <h2>Four frames, one picture, six answers</h2>
+  <p>From each movie, the watcher picks the four frames with the most motion and lays them out in a 2x2 grid, as one picture. That picture and the question go to a vision language model, Qwen3-VL 8B, running in Ollama on ada's graphics card.</p>
+  <div class="grid4" aria-hidden="true"><div>frame 1</div><div>frame 2</div><div>frame 3</div><div>frame 4</div></div>
+  <p class="figcap">What the model sees: one image, four moments from the movie.</p>
+  <p>The model has to answer in JSON:</p>
+<pre><span class="k">{</span>"person": false, "legs": false, <span class="t">"cat": true</span>, "dog": false, "raccoon": false, <span class="t">"animal": true</span><span class="k">}</span></pre>
+  <p>Everything after that is plain code acting on those six true/false answers. A cat at the pet door means a spoken "There's a cat at the door." A raccoon means a phone alert. A person on the porch means a picture on everyone's phone. If the first answer says "animal", a second, animal-only question double-checks which one.</p>
+  <p>One call takes about a second and a half. For the pet door there's also an early check on a single frame while the cat is still sitting there, so the speakers can announce her before she gives up and wanders off.</p>
+
+  <span class="eyebrow section">Picking a model</span>
+  <h2>By measuring, not by feel</h2>
+  <p>The first AI experiments, in August 2025, used Qwen2.5-VL in a 3-billion-parameter size, then a 7-billion one. I also tried Gemma 3 1B and a couple of others that weren't useful, and Llama 3.2 Vision, which worked but was slow. Today it's Qwen3-VL 8B.</p>
+  <p>What made the choice possible was a test set: 139 clips that I labeled by hand (118 from the pet door, 21 from the porch), and a script that runs a model over all of them and scores it. The rule since then: no change to the model, the question, the number of frames or the image size goes in unless the score says it's better.</p>
+  <p>That rule exists because of Percy. Between May and July 2026 the old setup called my cats "raccoon" about ninety times, mostly Percy and his ringed tail. When I went through 117 clips by eye, the earlier model was wrong on 47 of them. With the test set and the scores, those mistakes stopped.</p>
+  <div class="tbl">
+    <table>
+      <tr><th>Check</th><th class="num">Result</th></tr>
+      <tr><td>Earlier model, 117 clips checked by eye</td><td class="num">wrong on 47</td></tr>
+      <tr><td>Today, pet door test clips with every label right</td><td class="num">95 of 118</td></tr>
+      <tr class="hi"><td>Raccoon answers in the logs, Oct 28 to Nov 6 (about 2,550 checks)</td><td class="num">0</td></tr>
+    </table>
+  </div>
+
+  <span class="eyebrow section">The porch problem</span>
+  <h2>A cat is two tokens</h2>
+  <p>The porch was worse, and the reason was size. In the grid each frame is 512 pixels wide, and a cat on the porch is about 25 by 45 pixels. The model cuts pictures into tokens of about 32 by 32 pixels, so the cat was one or two tokens. The model could tell there was an animal, but not which one.</p>
+  <p>The fix was to crop each frame to the area that moved before building the grid. On the pet door, where a cat fills the frame, cropping helped some clips and hurt others, so the pet door doesn't crop. Same idea, measured separately for each camera.</p>
+  <div class="tbl">
+    <table>
+      <tr><th>Test clips all right</th><th class="num">No crop</th><th class="num">Crop to motion</th></tr>
+      <tr class="hi"><td>Porch (21 clips)</td><td class="num">11</td><td class="num">19</td></tr>
+      <tr><td>Pet door (118 clips)</td><td class="num">95</td><td class="num">94</td></tr>
+      <caption>On the porch the crop fixed all seven misnamed cats and broke nothing. On the pet door it fixed 8 clips and broke 9.</caption>
+    </table>
+  </div>
+  <p>The porch has one more quirk: the camera draws its own green box around anything that moves, right into the video, and for a while the AI read that box on the railing post as a person.</p>
+
+  <span class="eyebrow section">What it costs</span>
+  <h2>$1,000 up front, then electricity</h2>
+  <p>Once ada was bought, each check is free, apart from electricity. For comparison I worked out what the same roughly 900 calls a day would cost on paid AI services.</p>
+  <div class="tbl">
+    <table>
+      <tr><th>Where the AI runs</th><th class="num">Per month</th></tr>
+      <tr class="hi"><td>ada, at home</td><td class="num">electricity</td></tr>
+      <tr><td>Cheapest paid vision models</td><td class="num">$2–7</td></tr>
+      <tr><td>Mid-size paid model</td><td class="num">about $70</td></tr>
+      <tr><td>Large paid model</td><td class="num">about $140</td></tr>
+      <caption>Estimates from November 2026 prices; they change often.</caption>
+    </table>
+  </div>
+  <p>Most of the porch's calls are motion with nothing there (wind, light, the green box), so cutting those false alarms would cut a paid bill almost in proportion.</p>
+  <p>On price alone, ada wouldn't pay for itself against the cheapest paid models. That isn't why I bought it. On my own machine the footage of my house stays at home, I can run 2,500 test checks to compare two settings without thinking about a bill, and I can try any open model the day it comes out.</p>
+
+  <span class="eyebrow section">The rest of the system</span>
+  <h2>Server, web app, speakers</h2>
+  <ul class="sys">
+    <li><strong>Server:</strong> a Java Spring Boot server on a small cloud machine stores every event, movie and picture.</li>
+    <li><strong>Web app:</strong> a Vue 3 web app to browse and search events by label, camera and date. Tapping an event's labels lets us correct the AI, and those corrections become new test clips.</li>
+    <li><strong>Sign-in:</strong> Google sign-in, with each new person approved by me, and device keys for the cameras.</li>
+    <li><strong>Alerts:</strong> Telegram messages with a picture and a link to the movie, each sent once.</li>
+    <li><strong>Speakers:</strong> spoken announcements on the Google Home, with a short, cute sentence the AI writes about the cat in the picture.</li>
+    <li><strong>Keeping it running:</strong> health alerts when a camera drops off, a daily report, and version numbers on every piece so I know what's running where.</li>
+  </ul>
+
+  <span class="eyebrow section">How it got built</span>
+  <h2>2020 by hand, 2026 with help</h2>
+  <p>The first version, in 2020, was mine: the Pi camera code, a Java server and a Vue web page, written over a couple of months, with "working version!!!" in the commit log on March 12th. The AI part started in August 2025 as Bash scripts calling Ollama.</p>
+  <p>Since October 2026 I've built most of it with Claude Code as a pair programmer: the camera watcher that replaced the old capture code, the porch camera, the test scoring, the new web app, the announcements and the move to a new server. I decided what to build and checked the results, and it wrote much of the code, faster than I could have alone. I'm saying that plainly because it's true, and because it's part of what made this fun.</p>
+
+  <span class="eyebrow section">What's next</span>
+  <h2>A camera anyone could set up</h2>
+  <p>A new Pi camera, set up in a way anyone could copy. Maybe letting other people send their cameras to my server. And a "delivery" label for the porch, so the speakers can say a package just arrived.</p>
+  <p>The code is on GitHub: <a href="https://github.com/markmckellar/cmo">github.com/markmckellar/cmo</a></p>
+  <p>The story behind it, with the raccoons: <a href="../">Night Shift at the Pet Door</a>.</p>
+
+  <p class="note">November 2026. Numbers are from the cmo READMEs, the test scores and the camera logs.</p>
+</main>
+
+</body>
+</html>

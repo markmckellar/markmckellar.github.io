@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="A cat cam, a raccoon named Randy, ten RACCOON ALERT messages, barking dogs and a nervous cat: six years of a home camera and a private AI.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Night Shift at the Pet Door">
+<meta property="og:description" content="A cat cam, a raccoon named Randy, ten RACCOON ALERT messages, barking dogs and a nervous cat: six years of a home camera and a private AI.">
+<meta property="og:url" content="https://markmckellar.github.io/raccoons/">
+<meta property="og:image" content="https://markmckellar.github.io/images/raccoon.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://markmckellar.github.io/raccoons/">
+<style>body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>Night Shift at the Pet Door</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column, like a night log; camera clips break out wider with a timestamp overlay. Dark first: it happens at 3 am. */
+:root {
+  --night: #0d1417;      /* page */
+  --deck: #152126;       /* raised surfaces */
+  --door: #1f5c45;       /* the green door */
+  --flap: #e9efe9;       /* the white flap, main text */
+  --fur: #9aa6a3;        /* raccoon grey, secondary text */
+  --alert: #f2b13c;      /* RACCOON ALERT amber */
+  --line: #24343a;
+  --bubble: #1d2c33;
+  --f-display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Literata", Georgia, "Times New Roman", serif;
+  --f-cam: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --bubble: #ffffff; color-scheme: light; } }
+:root[data-theme="light"] {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --bubble: #ffffff; color-scheme: light; }
+
+* { box-sizing: border-box; }
+body { background: var(--night); color: var(--flap); font-family: var(--f-body); font-size: 1.13rem; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+main { max-width: 40rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.1rem; }
+p { margin: 0; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; line-height: 1.05; margin: 0; }
+h1 { font-size: clamp(2.6rem, 9vw, 4.6rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 800; margin-top: 2.6rem; }
+.eyebrow, .cam, .meta { font-family: var(--f-cam); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fur); }
+.chapter { display: block; color: var(--alert); margin-top: 2.6rem; margin-bottom: -0.6rem; }
+.chapter + h2 { margin-top: 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+a { color: var(--alert); }
+button { font: 600 0.85rem var(--f-cam); letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+  background: var(--door); color: #f4f7f3; border: 0; border-radius: 999px; padding: 0.7rem 1.2rem; }
+button:focus-visible { outline: 3px solid var(--alert); outline-offset: 3px; }
+button:hover { filter: brightness(1.15); }
+
+/* Hero */
+header.hero { max-width: 64rem; margin: 0 auto; padding-block: 2.5rem 1rem; display: grid; gap: 1.5rem; }
+.hero .lede { font-size: 1.25rem; color: var(--fur); max-width: 36rem; }
+
+/* Camera clips */
+figure { margin: 0.6rem 0; }
+.clip { position: relative; border-radius: 6px; overflow: hidden; background: #000; max-width: 100%; }
+.clip video, .clip img { display: block; width: 100%; height: auto; }
+.clip .cam { position: absolute; left: 0.6rem; top: 0.5rem; color: #e9efe9; text-shadow: 0 1px 3px #000; font-size: 0.72rem; }
+.clip .rec { position: absolute; right: 0.7rem; top: 0.55rem; color: #ff5a4f; font: 600 0.72rem var(--f-cam); text-shadow: 0 1px 3px #000; }
+.rec::before { content: "●"; margin-right: 0.3em; animation: blink 1.4s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0.2; } }
+figcaption { font-family: var(--f-cam); font-size: 0.78rem; color: var(--fur); margin-top: 0.5rem; line-height: 1.5; }
+.wide { width: min(52rem, 100%); align-self: center; }
+
+/* Cast */
+.cast { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(10.5rem, calc(50% - 0.4rem)), 1fr)); grid-auto-rows: minmax(15rem, 1fr); gap: 0.8rem; margin-top: 0.4rem; }
+/* Every card is the same size: rows are at least 15rem and all match the tallest card (1fr) */
+.who { background: var(--deck); border-radius: 6px; padding: 0.9rem 1rem; display: grid; gap: 0.2rem; align-content: start; }
+.who b { font-family: var(--f-display); font-size: 1.2rem; }
+.who span { font-size: 0.92rem; line-height: 1.45; color: var(--fur); }
+/* Flip cards: both faces share one grid cell, so the card keeps its size when it turns over */
+button.flip { font: inherit; text-transform: none; letter-spacing: 0; text-align: left; color: var(--flap);
+  background: none; border: 0; border-radius: 6px; padding: 0; perspective: 900px; display: grid; }
+button.flip:hover { filter: none; }
+.flip .card { display: grid; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(.3,.7,.3,1); }
+.flip[aria-pressed="true"] .card { transform: rotateY(180deg); }
+.flip .face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid transparent; }
+.flip:hover .face { border-color: var(--door); }
+.flip .front { display: flex; flex-direction: column; gap: 0.2rem; }
+.flip .back { transform: rotateY(180deg); grid-template-rows: auto 1fr auto; align-content: stretch; padding-bottom: 0.7rem; }
+.flip .peek { font-family: var(--f-cam); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--alert); margin-top: auto; padding-top: 0.3rem; }
+/* The photo fills whatever space is left under the name, scaled to fit: nothing is cropped */
+.flip .pic { position: relative; margin-top: 0.35rem; min-height: 6rem; }
+.flip .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.flip .cap { font-family: var(--f-cam); font-size: 0.72rem; margin-top: 0.35rem; }
+@media (prefers-reduced-motion: reduce) {
+  .flip .card { transition: none; }
+}
+
+/* Pull line */
+.pull { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.4rem, 4.5vw, 1.9rem); line-height: 1.15;
+  color: var(--alert); padding-block: 0.6rem; text-wrap: balance; }
+
+/* Phone */
+.phone { background: var(--deck); border-radius: 22px; padding: 1rem; max-width: 22rem; width: 100%; align-self: center;
+  display: flex; flex-direction: column; gap: 0.5rem; border: 1px solid var(--line); }
+.phone .bar { display: flex; justify-content: space-between; }
+.feed { display: flex; flex-direction: column; gap: 0.35rem; height: 19rem; overflow-y: auto; padding-right: 0.2rem; }
+.msg { background: var(--bubble); border-radius: 12px 12px 12px 3px; padding: 0.45rem 0.7rem; font: 0.88rem/1.4 var(--f-cam);
+  align-self: flex-start; max-width: 90%; animation: pop 0.2s ease-out; }
+.msg.big { color: var(--alert); font-weight: 600; }
+.msg img { display: block; width: 100%; border-radius: 8px; margin-bottom: 0.3rem; }
+.phone.buzz { animation: buzz 0.12s linear 3; }
+@keyframes pop { from { transform: scale(0.9); opacity: 0.4; } }
+@keyframes buzz { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+/* Controls row */
+.act { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+.act .meta { text-transform: none; letter-spacing: 0; font-size: 0.85rem; }
+
+/* Quiz */
+.quiz { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.8rem; }
+.quiz button.pick { padding: 0; border-radius: 6px; background: #000; overflow: hidden; position: relative; text-align: left; }
+.quiz button.pick img { display: block; width: 100%; }
+.quiz .tag { position: absolute; left: 0.5rem; bottom: 0.5rem; background: rgba(0,0,0,0.75); color: #fff; border-radius: 4px;
+  padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+.verdict { min-height: 1.7em; font-family: var(--f-cam); font-size: 0.9rem; color: var(--alert); }
+
+/* Night chart */
+.nights { overflow-x: auto; }
+.nights svg { display: block; width: 100%; min-width: 30rem; height: auto; }
+
+/* Timeline strip at the end */
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: 0.95rem; }
+.log li { display: grid; grid-template-columns: 6.6rem 1fr; gap: 0.8rem; border-top: 1px solid var(--line); padding-top: 0.35rem; }
+.log time { font-family: var(--f-cam); font-size: 0.8rem; color: var(--fur); padding-top: 0.2rem; font-variant-numeric: tabular-nums; }
+.end { font-family: var(--f-display); font-size: 1.5rem; font-weight: 800; line-height: 1.2; margin-top: 2rem; text-wrap: balance; }
+.note { font-size: 0.9rem; color: var(--fur); border-left: 3px solid var(--door); padding-left: 0.8rem; }
+
+@media (prefers-reduced-motion: reduce) { .rec::before, .msg, .phone.buzz { animation: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">Pet door camera · 2020 to now</span>
+  <h1>Night Shift at the Pet Door</h1>
+  <p class="lede">A cat cam, a raccoon named Randy, ten RACCOON ALERT messages, barking dogs nobody asked for, and a nervous cat who now has her own announcement.</p>
+  <figure class="clip wide">
+    <video src="media/three_at_once.mp4" autoplay muted loop playsinline aria-label="Three raccoons come up to the pet door at night"></video>
+    <span class="cam">PET_DOOR · 2026-08-03 00:32:09</span><span class="rec">REC</span>
+  </figure>
+</header>
+
+<main>
+  <p class="meta" style="text-align:center">Three at once. One in the flap, one below, one off to the right.</p>
+
+  <span class="eyebrow chapter">Chapter 1 · 2019 to 2020</span>
+  <h2>It started as a cat cam</h2>
+  <p>We got Finn and Mara in May 2019. They came and went through a plain flap pet door that had gone in years before, for the dog we had back then. Indoor cats, outdoor cats, whatever they felt like that hour.</p>
+  <p>I just wanted to know when they left and when they came home. So in February 2020 I pointed a Raspberry Pi at the flap and started writing code. On March 12th the commit message reads <em>"working version!!!"</em>, three exclamation marks and all. The server's web addresses still say <code>/catcam/</code> to this day.</p>
+  <p>That spring I was scrolling through the night's movies and something that was very much not a cat walked up to the door. A raccoon. It never came in. But I started wondering how to build a door that closes for anything that isn't a cat.</p>
+  <p>Every design I sketched had the same problem. A door that slams shut when the wrong animal is in the flap is a door that can slam shut on the right one.</p>
+  <p class="pull">Every one of my pet door ideas looked like a cat guillotine.</p>
+  <p>And even if I'd built a door that didn't, there was a second problem: knowing <em>when</em> to close it. The camera could tell me something was at the flap. It couldn't tell me what. I tried several ways to teach it the difference between a cat and a raccoon, with less than limited success.</p>
+  <p>The raccoons didn't go away completely. Every so often one would turn up on the camera at night, but as far as we ever saw, none of them came in. So the idea went in a drawer, and the cat cam kept quietly running for five years.</p>
+
+  <span class="eyebrow chapter">The cast</span>
+  <div class="cast">
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Finn</b><span>Cat. Adapts to anything.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Finn</b><span class="pic"><img src="media/cast_finn.jpg" alt="Finn, a black and white tuxedo cat with a red collar, sitting on a brick garden wall by the snow" loading="lazy"></span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Mara</b><span>Cat. Nervous. Holds a grudge against a door.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Mara</b><span class="pic"><img src="media/cast_mara.jpg" alt="Mara, a small black cat with white paws, tucked under a wooden cabinet" loading="lazy"></span><span class="cap">Small, black, white paws. Hiding, as usual.</span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Percy</b><span>Neighborhood cat who adopted us in 2022. Ringed tail. The AI's number one raccoon suspect.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Percy</b><span class="pic"><img src="media/cast_percy.jpg" alt="Percy, a striped tabby cat with white paws, sitting on a small wooden table with his ringed tail hanging down" loading="lazy"></span><span class="cap">Exhibit A: the tail.</span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Me</b><span>Wrote the code. Owns the broom.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Me</b><span class="pic"><img src="media/cast_me.png" alt="Cartoon of me smiling in a grey flat cap with a grey beard, with Finn, Mara and Percy in front and the words CAT DAD in blue" loading="lazy"></span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>My partner</b><span>Found Randy, named Randy, misses Randy.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>My partner</b><span class="pic"><img src="media/cast_partner.png" alt="Cartoon of my partner smiling, with long braids and a gold nose ring, with Finn, Mara and Percy in front and the words CAT MOM in pink" loading="lazy"></span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Randy</b><span>Raccoon. Very respectable. The only one who got a name.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Randy</b><span class="pic"><img src="media/cast_randy.jpg" alt="A raccoon's head coming through the pet door flap at night" loading="lazy"></span><span class="cap">No official portrait. A 2025 raccoon coming through the flap. Could be him.</span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>The friends</b><span>Raccoons, up to three at once. Not respectable.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>The friends</b><span class="pic"><img src="media/cast_friends.jpg" alt="Two raccoons at the pet door at night, one in the flap and one looking at the camera" loading="lazy"></span><span class="cap">Two of them at the flap, August 2026.</span></span></span></button>
+    <button type="button" class="flip" aria-pressed="false"><span class="card">
+      <span class="who face front"><b>Milo</b><span>My son's dog. Raccoons hate him, from a distance.</span><span class="peek">Flip for photo</span></span>
+      <span class="who face back" aria-hidden="true"><b>Milo</b><span class="pic"><img src="media/cast_milo.jpg" alt="Milo, a fluffy black and white dog, sitting on the grass with his mouth open in a big smile" loading="lazy"></span></span></span></button>
+  </div>
+
+  <span class="eyebrow chapter">Chapter 2 · March 2022</span>
+  <h2>Percy moves in</h2>
+  <p>I spent three months living in Amsterdam. When I got home, a cat I'd never seen was coming in through the flap like he paid rent. Tabby-ish, friendly, and a tail with rings on it, the kind of tail that makes you look twice in the dark. We called him Percy, and he stayed.</p>
+
+  <span class="eyebrow chapter">Chapter 3 · Early June 2025</span>
+  <h2>Randy</h2>
+  <p>Five years after the first raccoon, the old dog flap was still just a flap. One night my partner got up for a glass of water. There was Percy, walking away from the cat food. Nothing unusual about that. Percy loves his food.</p>
+  <p>Then she took another look. That was not Percy.</p>
+  <p>She headed off to get me, and on the way she saw him zoom across a clear stretch of floor and straight out the flap.</p>
+  <p>She woke me anyway. I jumped into jeans, boots, and a thick coat over a hoodie, because I had no idea what I was about to walk into. On the way, I grabbed a broom out of the closet. By the time I got out there, broom raised, the living room was empty.</p>
+  <p>She named him Randy.</p>
+  <p>Randy came back over the next few nights, and she'd spot him in the house. Her review: very respectable, never made a mess. As far as she was concerned we'd simply picked up another neighborhood cat, like Percy. Then Randy stopped coming, and she missed him.</p>
+  <p>When Randy finally did come back, he'd brought friends.</p>
+  <p>The friends were not respectable. The mornings started to come with questions. <em>Did you move the cat food? Why are the games on the floor?</em></p>
+  <p>Eventually it occurred to us that we owned a camera pointed at the only way in. So we checked it. There they were: not just Randy, but the whole gang, coming in through the flap, several nights in a row, while we slept.</p>
+  <p class="pull">One respectable raccoon is a houseguest. A gang is a problem.</p>
+
+  <span class="eyebrow chapter">Chapter 4 · June to July 2025</span>
+  <h2>A lot of CAT scans</h2>
+  <p>About a week after the friends showed up, on June 19th, 2025, I gave up on ever building the guillotine and spent $181.39 on a SureFlap DualScan, a pet door that reads each cat's microchip and only unlocks for them. Plus $25 for expedited shipping, because raccoons. It arrived and was installed a couple of days later.</p>
+  <p>Then every cat had to be registered. You press a button on the door, then hold the cat in the doorway until it beeps. It's self-checkout at the grocery store, except the groceries have claws and you have to feed them through a small hole. <em>Unexpected cat in bagging area.</em></p>
+  <p>I also hadn't figured out the settings. So I cleared the door and started over. Then I did it again. And again. Every reset meant catching all three cats and scanning them all over again. None of the scans were appreciated.</p>
+  <p>Mara appreciated hers least of all. Afterwards, every time the lock clicked, she ran. We were afraid she'd never come in again, so we switched the clever door off and left the flap open. No lock, no click. A $206 plain flap, expedited. Mara slowly forgave it.</p>
+  <p>The raccoons didn't need to forgive anything. They just needed to notice the flap was open again. It took them a few weeks, and this time the camera was saving every clip.</p>
+  <figure class="clip">
+    <video src="media/gang_2025.mp4" autoplay muted loop playsinline aria-label="A big raccoon at the flap with two smaller ones underneath"></video>
+    <span class="cam">PET_DOOR · 2025-07-16 04:02:37</span><span class="rec">REC</span>
+  </figure>
+  <figcaption>July 16th, 2025: eleven clips between 02:51 and 04:29. This one has three: a big one in the flap and two small ones underneath. They were back on the 18th, 20th and 22nd.</figcaption>
+  <p>Two days later the camera started sending a picture to our phones every time something moved at the pet door. It had no idea what it was looking at. Cat, raccoon, a leaf: you got a picture. A lot of pictures.</p>
+
+  <span class="eyebrow chapter">Chapter 5 · Late July 2025</span>
+  <h2>The dog defense</h2>
+  <p>We went away for a trip, and my son and his wife house-sat with their dog, Milo. The raccoons came up to the door every night, took one sniff, and left. The camera has no raccoons inside from the week the dog was there. Best security system we ever had, and it ate kibble.</p>
+  <p>We came home in early August. So did the raccoons. Sometimes one, sometimes a crowd. The dog smell faded, and they started trying the flap again.</p>
+
+  <span class="eyebrow chapter">Chapter 6 · August 2025</span>
+  <h2>Ten RACCOON ALERTs</h2>
+  <p>This time I went for AI. Back in 2020, getting a computer to tell a cat from a raccoon was the part I couldn't crack. Five years later, I could just ask one. I bought a computer just for that job: an HP desktop with a graphics card big enough to run a vision AI at home, for about $1,000. It's called ada. On August 9th I started a little project that sends the camera's movie to a vision model running on ada and asks what it sees. On August 14th the camera asked its first question.</p>
+  <p>Once it could tell a raccoon from a cat, the alerts got serious. One message for the picture. Then ten more, in capitals, to make sure somebody actually woke up.</p>
+  <div class="phone" id="phone" aria-live="polite">
+    <div class="bar"><span class="meta">cmo alerts</span><span class="meta" id="clock">04:40</span></div>
+    <div class="feed" id="feed"></div>
+    <button type="button" id="alertBtn">Replay a raccoon night</button>
+  </div>
+  <p>It worked, in the sense that somebody woke up. By the time I'd made it down the hall to the living room, where the cat food lives, the raccoons had already left.</p>
+
+  <span class="eyebrow chapter">Chapter 7 · Summer 2026</span>
+  <h2>Raccoon summer</h2>
+  <p>The raccoons came back in May 2026 and really settled in at the end of July. On July 30th and 31st the camera caught 26 raccoon clips in two nights, often two or three at once, pawing at the open flap.</p>
+  <figure class="clip">
+    <video src="media/push_through.mp4" autoplay muted loop playsinline aria-label="A raccoon pushes into the flap while a smaller one watches from the deck"></video>
+    <span class="cam">PET_DOOR · 2026-07-30 05:10:43</span><span class="rec">REC</span>
+  </figure>
+  <figcaption>The big one goes for the flap while a small one watches from the deck.</figcaption>
+  <figure class="nights">
+    <svg id="nights" viewBox="0 0 640 170" role="img" aria-label="Raccoon clips per night from May to October 2026"></svg>
+    <figcaption>Raccoon clips per night in 2026, counted by eye. Nothing after October 15th.</figcaption>
+  </figure>
+  <p>By then I had a routine. The Google Home would sound a raccoon alert, I'd go out with a flashlight, and the raccoons would leave. Not far, though. I could hear them on the other side of the fence, waiting for me to go back to bed.</p>
+  <p>On July 31st, at 9:47 pm, in the middle of the evening's visit, I decided to settle it. Jeans, boots, thick coat, broom: the full outfit from the night I went looking for Randy. Only this time it was Randy and his gang. I opened the gate and stepped through to chase them off, I suppose. It was not a well-thought-out plan.</p>
+  <p>On the other side of the gate I heard them rustling in the bushes. Then nothing at all. Just me in the dark, in a winter coat in July, holding a broom.</p>
+  <p>I went back in. The Google Home went off again just before midnight, and I got up again. And again at 4:32, about an hour before the sun came up. Every time, they'd gone by the time I got there.</p>
+  <p>After that night, I kept the broom next to the bed.</p>
+  <p class="pull">Raccoons: 26 clips in two nights. Me: one broom, zero raccoons.</p>
+  <p>Meanwhile the AI had a confession to make. Between May and July, the model I was using called my cats "raccoon" about ninety times, and its favourite suspect was Percy. Remember the tail? A striped cat with a ringed tail, at night, at the flap where the raccoons stand. The early versions saw that tail and shouted raccoon, over and over. Percy did not appreciate being called a raccoon.</p>
+  <p>Try it yourself. Which one is the raccoon?</p>
+  <div class="quiz">
+    <button type="button" class="pick" data-real="no"><img src="media/not_a_raccoon.jpg" alt="Pet door at night, a striped furry animal at the flap"><span class="tag">2026-06-10 21:29</span></button>
+    <button type="button" class="pick" data-real="yes"><img src="media/real_raccoon.jpg" alt="Pet door at night, a grey furry animal at the flap"><span class="tag">2026-08-03 00:32</span></button>
+  </div>
+  <p class="verdict" id="verdict" aria-live="polite"></p>
+  <p>So I started testing. I hand-labeled clips, scored every change to the model and the prompt against them, and only kept what scored better. Bit by bit Percy stopped being a raccoon. These days the AI almost always calls him what he is: a cat with a very misleading tail. Percy feels much better about it.</p>
+
+  <span class="eyebrow chapter">Chapter 8 · August 2026</span>
+  <h2>Who let the dogs out</h2>
+  <p>The afternoon after the broom night, I tried something else. Another trip was coming up, and Milo wouldn't be house-sitting this time. If a real dog worked, maybe a fake one would. So when the AI saw a raccoon, the Google Home in the living room started barking.</p>
+  <div class="act">
+    <button type="button" id="barkBtn">Play what the house played</button>
+    <span class="meta" id="barkNote">Volume up. You'll see why the cats objected.</span>
+  </div>
+  <audio id="bark" src="media/dog_barking.mp3" preload="none"></audio>
+  <p>Because of how the camera works, the barking came a bit late: it had to finish the movie, then ask the AI, then tell the speaker. I'm fairly sure some nights the raccoons ate, left, and were halfway down the street before the dogs went off.</p>
+  <p>The cats, on the other hand, heard every single bark. They hated it. The raccoons, as far as I can tell, did not care at all.</p>
+
+  <span class="eyebrow chapter">Chapter 9 · September 2026</span>
+  <h2>We lock the door</h2>
+  <p>Around September 16th we turned the microchip lock back on. The camera tells the rest of the story: the day before, 25 trips through the door. The next two days, four and three. Then the cats started sitting outside it, staring at it, waiting for a human. Some days there were a hundred events of a cat looking at a door.</p>
+  <p>Finn and Percy figured it out within a couple of weeks. Mara didn't. The raccoons kept coming all through September, pawing at a flap that no longer opened, and went home with nothing. The last one so far showed up on October 15th at 4:40 am.</p>
+
+  <span class="eyebrow chapter">Chapter 10 · October 2026</span>
+  <h2>There's a cat at the door</h2>
+  <p>So the raccoon project turned into a cat butler. Now when the camera sees a cat waiting, the speakers in the house say so, and whoever hears it gets up and opens the door.</p>
+  <div class="act">
+    <button type="button" id="sayBtn">Hear the announcement</button>
+    <span class="meta" id="sayNote">The same Google voice the speakers use.</span>
+  </div>
+  <audio id="say" src="media/cat_at_door.mp3" preload="none"></audio>
+  <p>Mara will now use the pet door to go out. She will not use it to come back in. She sits on the deck, the house announces her, and someone lets her in like a hotel guest.</p>
+  <p>Somewhere in there a porch camera joined the system too: a store-bought one that pinged my phone every time the wind blew, until it got rewired into my own setup. That's <a href="porch/">a story for another night</a>.</p>
+
+  <p class="end">Six years of code, an AI on my own computer looking at 900 clips a day, and the main thing it does is make sure I let the cat in.</p>
+  <p>Next I'm setting up a new Pi camera, this time in a way anyone could do, and maybe letting other people use my server. The code is on <a href="https://github.com/markmckellar/cmo">GitHub</a>.</p>
+  <p>If you want to know how it works (the computer, the AI, how I test it and what it costs), I wrote that up too: <a href="how-it-works/">How the pet door camera works</a>.</p>
+
+  <span class="eyebrow chapter">The log</span>
+  <ol class="log">
+    <li><time>2019-05</time><span>Finn and Mara arrive.</span></li>
+    <li><time>2020-02-19</time><span>First commit of the cat cam server.</span></li>
+    <li><time>2020-03-12</time><span>"working version!!!"</span></li>
+    <li><time>2020 spring</time><span>A raccoon at the door. The cat guillotine sketches begin.</span></li>
+    <li><time>2022-03</time><span>Percy moves in.</span></li>
+    <li><time>2025-06 early</time><span>Randy is caught by the cat food in the middle of the night.</span></li>
+    <li><time>2025-06 mid</time><span>Randy comes back with friends. The mess begins.</span></li>
+    <li><time>2025-06-19</time><span>The microchip door is ordered. Mara objects. It gets switched off.</span></li>
+    <li><time>2025-07-16</time><span>The gang is back on camera: 11 clips, up to three at once.</span></li>
+    <li><time>2025-07-18</time><span>Every pet door picture goes to our phones.</span></li>
+    <li><time>2025-08-14</time><span>The camera asks the AI what it sees for the first time.</span></li>
+    <li><time>2025-08</time><span>Ten RACCOON ALERTs.</span></li>
+    <li><time>2026-07-30</time><span>Raccoon family nights: 26 clips in two nights.</span></li>
+    <li><time>2026-08-01</time><span>The Google Home starts barking.</span></li>
+    <li><time>2026-09-16</time><span>The door gets locked.</span></li>
+    <li><time>2026-10-14</time><span>"There's a cat at the door."</span></li>
+    <li><time>2026-10-15</time><span>Last raccoon so far.</span></li>
+    <li><time>2026-11-03</time><span>The code goes public.</span></li>
+  </ol>
+  <p class="note">Dates checked against git history and the camera's own records where they exist, and from memory where they don't. Clips are from the pet door camera; nothing here shows people, the street, or the house number.</p>
+</main>
+
+<script>
+(() => {
+  // Cast cards: tap to turn the card over (name stays at the top of the photo side)
+  document.querySelectorAll('button.flip').forEach(b => b.addEventListener('click', () => {
+    const flipped = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', flipped);
+    b.querySelector('.front').setAttribute('aria-hidden', flipped);
+    b.querySelector('.back').setAttribute('aria-hidden', !flipped);
+  }));
+
+  // Alert replay
+  const feed = document.getElementById('feed'), phone = document.getElementById('phone'), btn = document.getElementById('alertBtn');
+  let timers = [];
+  function add(html, cls) {
+    const d = document.createElement('div'); d.className = 'msg' + (cls ? ' ' + cls : ''); d.innerHTML = html;
+    feed.appendChild(d); feed.scrollTop = feed.scrollHeight;
+  }
+  function seed() {
+    feed.innerHTML = '';
+    add('<img src="media/real_raccoon.jpg" alt="">pet_door 00:32 · raccoon');
+    for (let i = 0; i < 3; i++) add('RACCOON ALERT!!!', 'big');
+  }
+  function replay() {
+    timers.forEach(clearTimeout); timers = []; feed.innerHTML = '';
+    timers.push(setTimeout(() => add('<img src="media/real_raccoon.jpg" alt="">pet_door 00:32 · raccoon'), 150));
+    for (let i = 0; i < 10; i++) timers.push(setTimeout(() => {
+      add('RACCOON ALERT!!!', 'big'); phone.classList.remove('buzz'); void phone.offsetWidth; phone.classList.add('buzz');
+      if (navigator.vibrate) try { navigator.vibrate(60); } catch (e) {}
+    }, 700 + i * 380));
+    timers.push(setTimeout(() => add('…the raccoons have left the building.'), 700 + 10 * 380 + 900));
+  }
+  seed(); btn.addEventListener('click', replay);
+
+  // Barking
+  const bark = document.getElementById('bark'), barkBtn = document.getElementById('barkBtn'), barkNote = document.getElementById('barkNote');
+  barkBtn.addEventListener('click', () => {
+    if (!bark.paused) { bark.pause(); bark.currentTime = 0; barkBtn.textContent = 'Play what the house played'; return; }
+    bark.play().then(() => { barkBtn.textContent = 'Stop the dogs'; barkNote.textContent = 'Cats: furious. Raccoons: still eating.'; })
+      .catch(() => { barkNote.textContent = 'Your browser blocked the sound. Try again.'; });
+  });
+  bark.addEventListener('ended', () => { barkBtn.textContent = 'Play what the house played'; });
+
+  // Announcement
+  const sayBtn = document.getElementById('sayBtn'), sayNote = document.getElementById('sayNote');
+  const say = document.getElementById('say');
+  sayBtn.addEventListener('click', () => {
+    say.currentTime = 0;
+    say.play().then(() => { sayNote.textContent = '"There is a cat at the door. A small black cat with white paws is waiting by the door." That\'s Mara.'; })
+      .catch(() => { sayNote.textContent = 'Your browser blocked the sound. Try again.'; });
+  });
+
+  // Quiz
+  const verdict = document.getElementById('verdict');
+  document.querySelectorAll('.pick').forEach(b => b.addEventListener('click', () => {
+    verdict.textContent = b.dataset.real === 'yes'
+      ? 'Right, the grey one is a raccoon. The early AI agreed. It also said the striped one was a raccoon. That one is a cat, probably Percy.'
+      : 'Nope, that’s a cat. Probably Percy, and his tail. You and the early AI made the same mistake.';
+  }));
+
+  // Nights chart: clips per night, 2026-05-01 to 2026-10-31
+  const nights = {"05-16":1,"07-30":8,"07-31":18,"08-01":4,"08-02":4,"08-03":2,"08-05":5,"08-06":1,"08-07":1,"08-08":1,
+    "08-13":3,"08-14":1,"08-23":5,"08-31":1,"09-03":1,"09-11":1,"09-19":1,"09-24":1,"09-25":3,"09-26":1,"09-27":1,"09-30":1,"10-03":2,"10-15":1};
+  const svg = document.getElementById('nights'), NS = 'http://www.w3.org/2000/svg';
+  const start = Date.UTC(2026, 4, 1), days = 184, L = 34, R = 630, T = 12, B = 140, max = 20;
+  const x = d => L + (d + 0.5) * (R - L) / days, y = v => B - v * (B - T) / max;
+  const el = (n, a, t) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (t != null) e.textContent = t; svg.appendChild(e); return e; };
+  [0, 10, 20].forEach(v => {
+    el('line', { x1: L, x2: R, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 });
+    el('text', { x: L - 6, y: y(v) + 4, 'text-anchor': 'end', fill: 'var(--fur)', 'font-family': 'var(--f-cam)', 'font-size': 10 }, v);
+  });
+  ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'].forEach((m, i) => {
+    const d = (Date.UTC(2026, 4 + i, 1) - start) / 864e5;
+    el('text', { x: x(d), y: B + 18, fill: 'var(--fur)', 'font-family': 'var(--f-cam)', 'font-size': 10 }, m);
+  });
+  const lock = (Date.UTC(2026, 8, 16) - start) / 864e5;
+  el('line', { x1: x(lock), x2: x(lock), y1: T, y2: B, stroke: 'var(--door)', 'stroke-width': 2, 'stroke-dasharray': '4 3' });
+  el('text', { x: x(lock) + 5, y: T + 10, fill: 'var(--fur)', 'font-family': 'var(--f-cam)', 'font-size': 10 }, 'door locked');
+  const bw = (R - L) / days * 0.8;
+  for (const k in nights) {
+    const [mo, da] = k.split('-').map(Number), d = (Date.UTC(2026, mo - 1, da) - start) / 864e5, v = nights[k];
+    el('rect', { x: x(d) - bw / 2, y: y(v), width: Math.max(bw, 2), height: B - y(v), fill: 'var(--alert)', rx: 1 });
+  }
+  el('text', { x: x((Date.UTC(2026, 6, 31) - start) / 864e5) + 6, y: y(18) + 4, fill: 'var(--flap)', 'font-family': 'var(--f-cam)', 'font-size': 10 }, '18 on Jul 31');
+})();
+</script>
+
+</body>
+</html>

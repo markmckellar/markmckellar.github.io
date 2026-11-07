@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="A store-bought porch camera, 60 alerts on a windy day, a month of curl commands, and the week it became part of my own system.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Meanwhile, on the Porch">
+<meta property="og:description" content="A store-bought porch camera, 60 alerts on a windy day, a month of curl commands, and the week it became part of my own system.">
+<meta property="og:url" content="https://markmckellar.github.io/raccoons/porch/">
+<meta property="og:image" content="https://markmckellar.github.io/images/raccoon.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://markmckellar.github.io/raccoons/porch/">
+<style>body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>Meanwhile, on the Porch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a side story to "Night Shift at the Pet Door", same night-log palette and type. One reading column; the receipt, the app's scavenger hunt and the before/after are the set pieces. Dark first. */
+:root {
+  --night: #0d1417;
+  --deck: #152126;
+  --door: #1f5c45;
+  --flap: #e9efe9;
+  --fur: #9aa6a3;
+  --alert: #f2b13c;
+  --line: #24343a;
+  --paper: #e9e4d6;
+  --ink: #2a2a26;
+  --f-display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Literata", Georgia, "Times New Roman", serif;
+  --f-cam: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --paper: #fbf9f3; --ink: #2a2a26; color-scheme: light; } }
+:root[data-theme="light"] {
+  --night: #f3f5f1; --deck: #e4eae4; --door: #1f5c45; --flap: #142024; --fur: #4f5d5a;
+  --alert: #a5640a; --line: #cdd6d0; --paper: #fbf9f3; --ink: #2a2a26; color-scheme: light; }
+
+* { box-sizing: border-box; }
+body { background: var(--night); color: var(--flap); font-family: var(--f-body); font-size: 1.13rem; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+main { max-width: 40rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1.1rem; }
+p { margin: 0; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; line-height: 1.05; margin: 0; }
+h1 { font-size: clamp(2.5rem, 9vw, 4.4rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.5rem, 5vw, 2.1rem); font-weight: 800; margin-top: 2.4rem; }
+.eyebrow, .meta { font-family: var(--f-cam); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fur); }
+a { color: var(--alert); }
+em { font-style: italic; }
+
+header.hero { max-width: 40rem; margin: 0 auto; padding-block: 2.5rem 1rem; display: grid; gap: 1rem; }
+.hero .lede { font-size: 1.22rem; color: var(--fur); }
+
+/* The receipt */
+.receipt { background: var(--paper); color: var(--ink); max-width: 20rem; width: 100%; align-self: center; padding: 1.1rem 1.2rem 1.3rem;
+  font: 0.86rem/1.6 var(--f-cam); border-radius: 2px; box-shadow: 0 1px 0 rgba(0,0,0,.15);
+  -webkit-mask: radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px) 0 0 / 12px 100% repeat-x;
+          mask: radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px) 0 0 / 12px 100% repeat-x; }
+.receipt .rh { text-align: center; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.receipt .row { display: flex; justify-content: space-between; gap: 1rem; font-variant-numeric: tabular-nums; }
+.receipt .tot { border-top: 1px dashed var(--ink); margin-top: 0.5rem; padding-top: 0.5rem; font-weight: 600; }
+.receipt .small { font-size: 0.74rem; margin-top: 0.6rem; text-align: center; }
+
+/* The alert counter */
+.counter { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; background: var(--deck); border-radius: 6px; padding: 0.9rem 1rem; }
+.counter b { font: 800 clamp(2.6rem, 10vw, 3.6rem)/1 var(--f-display); color: var(--alert); font-variant-numeric: tabular-nums; }
+.counter span { color: var(--fur); font-size: 0.95rem; min-width: 0; flex: 1 1 12rem; }
+
+/* The scavenger hunt: steps in the app */
+.hunt { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; counter-reset: s; }
+.hunt li { display: grid; grid-template-columns: 2rem 1fr; gap: 0.7rem; align-items: start; border-top: 1px solid var(--line); padding-top: 0.5rem; }
+.hunt li::before { counter-increment: s; content: counter(s); font: 800 1.3rem/1.2 var(--f-display); color: var(--alert); }
+.hunt li > span { min-width: 0; }
+
+/* Before and after */
+.ba { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.8rem; }
+.ba > div { background: var(--deck); border-radius: 6px; padding: 0.9rem 1rem; display: grid; gap: 0.35rem; align-content: start; min-width: 0; }
+.ba h3 { margin: 0; font: 800 1.15rem/1.2 var(--f-display); }
+.ba ul { margin: 0; padding-left: 1.1rem; font-size: 0.95rem; line-height: 1.5; display: grid; gap: 0.3rem; }
+.ba .after { border-left: 3px solid var(--door); }
+.ba .after h3 { color: var(--alert); }
+
+/* Timeline */
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: 0.95rem; }
+.log li { display: grid; grid-template-columns: 6.6rem 1fr; gap: 0.8rem; border-top: 1px solid var(--line); padding-top: 0.35rem; }
+.log time { font-family: var(--f-cam); font-size: 0.8rem; color: var(--fur); padding-top: 0.2rem; font-variant-numeric: tabular-nums; }
+
+.pull { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.35rem, 4.4vw, 1.85rem); line-height: 1.15;
+  color: var(--alert); padding-block: 0.5rem; text-wrap: balance; }
+.note { font-size: 0.9rem; color: var(--fur); border-left: 3px solid var(--door); padding-left: 0.8rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">A side story to <a href="../">Night Shift at the Pet Door</a> · February to October 2026</span>
+  <h1>Meanwhile, on the porch</h1>
+  <p class="lede">A store-bought camera, a clunky app, 60 alerts on a windy day, a month of curl commands, and the week it finally became mine.</p>
+</header>
+
+<main>
+  <h2>We buy a porch camera</h2>
+  <p>In February 2026 we bought a porch camera, a Jarnex. It came with its own app and a cloud service, and it needed a memory card.</p>
+  <div class="receipt" aria-label="What the porch camera cost">
+    <div class="rh">PORCH CAMERA</div>
+    <div class="row"><span>Jarnex camera</span><span>$120.00</span></div>
+    <div class="row"><span>Memory card</span><span>$69.99</span></div>
+    <div class="row tot"><span>Up front</span><span>$189.99</span></div>
+    <div class="row"><span>Cloud service</span><span>$60.00/yr</span></div>
+    <div class="small">February 2026</div>
+  </div>
+
+  <h2>Every leaf, every gust</h2>
+  <p>It sent an alert every time something moved, and on a porch something is always moving.</p>
+  <div class="counter"><b>60+</b><span>alerts on a windy day. Almost none of them were anything.</span></div>
+  <p>Checking one was a chore:</p>
+  <ol class="hunt">
+    <li><span>The alert shows you a photo, in one part of the app.</span></li>
+    <li><span>To see the movie, you back out of that and go into the movies section.</span></li>
+    <li><span>The first thing the movies section does is start a live stream of the porch, which by now is empty.</span></li>
+    <li><span>Then you scroll through the day's movies looking for the one that matched the alert, never quite sure which one it was, because there are so many.</span></li>
+  </ol>
+  <p>The memory card's videos could only be watched that way, in the app. Later, when I went looking, there was no way for my own software to get at those recordings at all. Only the live video.</p>
+
+  <h2>A month of curl commands</h2>
+  <p>I already had software that did this better at the pet door: it recorded the movie, decided what was in it, and showed it to me in one place. So in March I started wondering whether it could work with the porch camera too.</p>
+  <p>That turned into a month of curl commands, poking at the camera's ONVIF services and trying to get it to give up its movies. The first scripts are dated March 1st, about two weeks after the camera arrived. The last are from March 28th. It wouldn't cooperate, and I put it aside.</p>
+
+  <h2>Then, in one week</h2>
+  <p>In October I tried again, this time with help from Claude. On October 6th, around 8:40 in the evening, I opened Claude Code in the same folder as my old camera scripts.</p>
+  <p>Three days later, on October 9th, the porch camera's first movie landed on my own server. Two days after that, I turned off the cloud subscription.</p>
+  <p class="pull">Seven months of not working, then three days.</p>
+
+  <h2>Now it's mine</h2>
+  <p>The porch camera now goes through the same AI as the pet door, on the computer in our house. The wind still blows, but it doesn't send me pictures of it anymore.</p>
+  <div class="ba">
+    <div>
+      <h3>Before</h3>
+      <ul>
+        <li>An alert for anything that moved</li>
+        <li>60+ on a windy day</li>
+        <li>Photo in one place, movie in another</li>
+        <li>$60 a year</li>
+      </ul>
+    </div>
+    <div class="after">
+      <h3>Now</h3>
+      <ul>
+        <li>An alert only when there's someone or something there</li>
+        <li>The message says what it is</li>
+        <li>One tap opens that movie</li>
+        <li>Every event searchable on my own web page</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>The porch's own quirks</h2>
+  <p>The porch had problems the pet door never did. A cat on the porch is small and far away, so at first the AI could tell there was an animal but not which one. Cropping each frame to the part that moved fixed most of that: on my porch test clips it went from 11 right to 19 right out of 21.</p>
+  <p>Every porch "raccoon" so far has been a squirrel or a cat. And for a while the AI kept finding a person standing by the railing. It was the green box the camera draws around anything that moves, burned right into the picture.</p>
+
+  <h2>What's next</h2>
+  <p>A "delivery" label, so the speakers can say a package just arrived. I've been tagging examples as they happen: Amazon, UPS and USPS drivers, a courier in a blue vest, a box handed over at the door, and letter mail. The best wording so far catches six of the eight.</p>
+
+  <span class="eyebrow" style="margin-top:2.4rem">The log</span>
+  <ol class="log">
+    <li><time>2026-02</time><span>We buy the Jarnex.</span></li>
+    <li><time>2026-03-01</time><span>The first curl scripts.</span></li>
+    <li><time>2026-03-28</time><span>The last ones, for now.</span></li>
+    <li><time>2026-10-06</time><span>First evening with Claude Code.</span></li>
+    <li><time>2026-10-09</time><span>The porch camera's first movie on my own server.</span></li>
+    <li><time>2026-10-11</time><span>Cloud subscription off (the 11th or 12th).</span></li>
+    <li><time>2026-10-14</time><span>Crop to the motion: 11 to 19 right out of 21.</span></li>
+  </ol>
+  <p class="note">November 2026. A side story to <a href="../">Night Shift at the Pet Door</a>; how the AI works is in <a href="../how-it-works/">How the pet door camera works</a>. Dates from file dates, logs and git; prices and the app from memory.</p>
+</main>
+
+</body>
+</html>
